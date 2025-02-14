@@ -34,9 +34,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
   server: Server
   private readonly logger: Logger = new Logger(CommunicationsGateway.name)
 
-  constructor(
-    private readonly authService: AuthService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   afterInit(): void {
     instrument(this.server, {
@@ -100,7 +98,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     }
   }
 
-  private emitToClient(socket: Socket, event: string, content:unknown): void {
+  private emitToClient(socket: Socket, event: string, content: unknown): void {
     SocketIdStorage.set(socket.id)
     socket.compress(true).emit(event, content)
   }

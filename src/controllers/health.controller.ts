@@ -1,12 +1,12 @@
 import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus'
 import { Controller, Get } from '@nestjs/common'
-import {SocketHealthIndicator} from "../indicators/socket.indicator";
+import { SocketHealthIndicator } from '../indicators/socket.indicator'
 
 @Controller({ path: 'health' })
 export class HealthController {
   constructor(
-      private readonly healthCheckService: HealthCheckService,
-      private readonly socketHealthIndicator: SocketHealthIndicator
+    private readonly healthCheckService: HealthCheckService,
+    private readonly socketHealthIndicator: SocketHealthIndicator
   ) {}
 
   @Get()

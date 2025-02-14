@@ -9,46 +9,48 @@ const ATTEMPTS_NUMBER: number = 5
 
 @Injectable()
 export class SocketHealthIndicator {
-    constructor(private readonly authService: AuthService,
-                private readonly healthIndicatorService: HealthIndicatorService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly healthIndicatorService: HealthIndicatorService
+  ) {}
 
-    async isHealthy(key: string): Promise<HealthIndicatorResult> {
-        let socketInstance: Socket
-        const indicator = this.healthIndicatorService.check(key)
+  async isHealthy(key: string): Promise<HealthIndicatorResult> {
+    let socketInstance: Socket
+    const indicator = this.healthIndicatorService.check(key)
 
-        try {
-            const token: IToken = await this.authService.auth({
-                login: 'test',
-                role:Role.Read
-            } as UserDto)
-            let attempt: number = 1
+    try {
+      const token: IToken = await this.authService.auth({
+        login: 'test',
+        role: Role.Read,
+      } as UserDto)
+      let attempt: number = 1
 
-            socketInstance = io(`http://localhost:${GlobalConfig.server.serverPort}`, {
-                transports: ['websocket'],
-                autoConnect: false,
-                reconnection: false,
-                auth: {
-                    token: `Bearer ${token.access_token}`,
-                },
-            })
-            socketInstance.connect()
+      socketInstance = io(`http://localhost:${GlobalConfig.server.serverPort}`, {
+        transports: ['websocket'],
+        autoConnect: false,
+        reconnection: false,
+        auth: {
+          token: `Bearer ${token.access_token}`,
+        },
+      })
+      socketInstance.connect()
 
-            while (!socketInstance.connected && attempt <= ATTEMPTS_NUMBER) {
-                await new Promise((f) => setTimeout(f, 1000))
-                attempt++
-            }
+      while (!socketInstance.connected && attempt <= ATTEMPTS_NUMBER) {
+        await new Promise((f) => setTimeout(f, 1000))
+        attempt++
+      }
 
-            if (socketInstance.connected) {
-                return indicator.up()
-            }
+      if (socketInstance.connected) {
+        return indicator.up()
+      }
 
-            return indicator.down({ exception: 'Socket server not available' })
-        } catch (e) {
-            return indicator.down({ exception: e.message() })
-        } finally {
-            if (socketInstance) {
-                socketInstance.disconnect()
-            }
-        }
+      return indicator.down({ exception: 'Socket server not available' })
+    } catch (e) {
+      return indicator.down({ exception: e.message() })
+    } finally {
+      if (socketInstance) {
+        socketInstance.disconnect()
+      }
     }
+  }
 }

@@ -60,9 +60,9 @@ export class Config {
     this.socket = {
       exceptionEvent: 'exception',
       sendMeasurementEvent: 'sendMeasurement',
-        roomName: 'room',
-        noAuthTokenMessage: 'No auth token provided',
-        invalidTokenMessage: 'Invalid token',
+      roomName: 'room',
+      noAuthTokenMessage: 'No auth token provided',
+      invalidTokenMessage: 'Invalid token',
     }
   }
 }
