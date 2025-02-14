@@ -1,16 +1,18 @@
 import { TerminusModule } from '@nestjs/terminus'
 import { Module } from '@nestjs/common'
 import { HealthController } from '../controllers/health.controller'
-import { GlobalConfig } from '../config/global.config'
-import { TerminusLogger } from '../utils/terminusLogger.util'
+import { SocketHealthIndicator } from '../indicators/socket.indicator'
+import { AuthModule } from './auth.module'
 
 @Module({
   imports: [
     TerminusModule.forRoot({
-      errorLogStyle: GlobalConfig.environment.isProduction ? 'json' : 'pretty',
-      logger: GlobalConfig.environment.isProduction ? TerminusLogger : true,
+      errorLogStyle: 'pretty',
+      logger: true,
     }),
+    AuthModule,
   ],
   controllers: [HealthController],
+  providers: [SocketHealthIndicator],
 })
 export class HealthModule {}

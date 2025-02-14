@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { onApplicationBootstrapLogging, onApplicationShutdownLogging } from '../utils/lifeCycleLogging.util'
+import { onApplicationShutdownLogging } from '../utils/lifeCycleLogging.util'
 import { GlobalConfig } from '../config/global.config'
 import { LoggerModule } from 'nestjs-pino'
-import { v4 as uuidv4 } from 'uuid'
-import { ReqId } from 'pino-http'
-import { IncomingMessage, ServerResponse } from 'http'
+import { IncomingMessage } from 'http'
 import pino from 'pino'
-import { RequestIdStorage, SocketIdStorage } from '../utils/socketStorage.util'
-import LogFn = pino.LogFn
+import { SocketIdStorage } from '../utils/socketStorage.util'
 import { AuthModule } from './auth.module'
 import { HealthModule } from './health.module'
-import { MeasurementsModule } from './measurements.module'
+import { CommunicationsModule } from './comunications.module'
+import LogFn = pino.LogFn
 
 interface ILogBinding {
   context: string
@@ -61,7 +59,7 @@ interface ILogBinding {
     ConfigModule.forRoot({ cache: true, isGlobal: true }),
     AuthModule,
     HealthModule,
-    MeasurementsModule,
+    CommunicationsModule,
   ],
   providers: [onApplicationShutdownLogging],
 })

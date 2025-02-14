@@ -8,8 +8,12 @@ interface IEnvironmentConfig {
   isProduction: boolean
 }
 
-interface ISocketLiteralsConfig {
-  sendMeasurement: string
+interface ISocketConfig {
+  roomName: string
+  sendMeasurementEvent: string
+  noAuthTokenMessage: string
+  invalidTokenMessage: string
+  exceptionEvent: string
 }
 
 interface IServerConfig {
@@ -21,6 +25,8 @@ interface IAuthConfig {
   jwtExpirationTime: string
   algorithm: Algorithm
   hashSaltRounds: number
+  adminUser: string
+  adminPassword: string
 }
 
 interface ILogConfig {
@@ -32,7 +38,7 @@ export class Config {
   server: IServerConfig
   auth: IAuthConfig
   log: ILogConfig
-  socketLiterals: ISocketLiteralsConfig
+  socket: ISocketConfig
 
   constructor() {
     this.environment = {
@@ -40,17 +46,23 @@ export class Config {
       isProduction: process.env.NODE_ENV === 'production',
     }
     this.server = {
-      serverPort: parseInt(process.env.PORT, 10) || 8080,
+      serverPort: parseInt(process.env.PORT, 10) || 8081,
     }
     this.auth = {
       jwtSecret: process.env.JWT_SECRET || '123456',
       jwtExpirationTime: process.env.JWT_EXPIRATION_TIME || '1d',
       algorithm: 'HS256',
       hashSaltRounds: 12,
+      adminUser: process.env.ADMIN_USER || 'admin',
+      adminPassword: process.env.ADMIN_PASSWORD || 'admin',
     }
     this.log = { level: (process.env.LOG_LEVEL as Level) || 'debug' }
-    this.socketLiterals = {
-        sendMeasurement: 'sendMeasurement',
+    this.socket = {
+      exceptionEvent: 'exception',
+      sendMeasurementEvent: 'sendMeasurement',
+        roomName: 'room',
+        noAuthTokenMessage: 'No auth token provided',
+        invalidTokenMessage: 'Invalid token',
     }
   }
 }

@@ -1,4 +1,4 @@
-import { HealthCheck, HealthCheckResult, HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus'
+import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus'
 import { Controller, Get } from '@nestjs/common'
 import {SocketHealthIndicator} from "../indicators/socket.indicator";
 
