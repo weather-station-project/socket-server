@@ -1,0 +1,6 @@
+.git
+.github
+.idea
+.husky
+*Dockerfile*
+node_modules
