@@ -23,7 +23,7 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v5
         with:
-          images: weatherstationproject/backend
+          images: weatherstationproject/socket-server
           tags: type=match,pattern=\d.\d.\d
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
