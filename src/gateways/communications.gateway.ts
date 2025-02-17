@@ -87,29 +87,48 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     this.logger.log(`Device with name '${user.login}' disconnected`)
   }
 
-  @SubscribeMessage(GlobalConfig.socket.sendMeasurementEvent)
-  castMainCarouselElementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+  @SubscribeMessage(GlobalConfig.socket.sendAirMeasurementEvent)
+  sendAirMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+    this.processMessage(socket, GlobalConfig.socket.sendAirMeasurementEvent, content)
+  }
+
+  @SubscribeMessage(GlobalConfig.socket.sendGroundTemperatureEvent)
+  sendGroundTemperatureEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+    this.processMessage(socket, GlobalConfig.socket.sendGroundTemperatureEvent, content)
+  }
+
+  @SubscribeMessage(GlobalConfig.socket.sendWindMeasurementEvent)
+  sendWindMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+    this.processMessage(socket, GlobalConfig.socket.sendWindMeasurementEvent, content)
+  }
+
+  @SubscribeMessage(GlobalConfig.socket.sendRainfallEvent)
+  sendRainfallEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+    this.processMessage(socket, GlobalConfig.socket.sendRainfallEvent, content)
+  }
+
+  private processMessage(socket: Socket, event: string, content: unknown): void {
     SocketIdStorage.set(socket.id)
 
     try {
       const user: UserDto = getUserFromSocketData(socket.data)
 
       if (user.role !== Role.Write) {
-        this.logger.warn(`User '${user.login}' has no permission to send measurements`)
+        this.logger.warn(`User '${user.login}' has no permission to send events`)
 
         this.emitToClient(
           socket,
           GlobalConfig.socket.exceptionEvent,
           JSON.stringify({
             status: 'ws_error',
-            message: 'User has no permission to send measurements',
-          } as ICustomException)
+            message: 'User has no permission to send events',
+          } as ICustomException),
         )
       } else {
-        this.emitToLocation(socket, GlobalConfig.socket.sendMeasurementEvent, content)
+        this.emitToLocation(socket, event, content)
       }
     } catch (e) {
-      this.logger.error(e, `Error on '${GlobalConfig.socket.sendMeasurementEvent}' event`)
+      this.logger.error(e, `Error on '${event}' event`)
     }
   }
 

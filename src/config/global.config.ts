@@ -10,7 +10,10 @@ interface IEnvironmentConfig {
 
 interface ISocketConfig {
   roomName: string
-  sendMeasurementEvent: string
+  sendAirMeasurementEvent: string
+  sendGroundTemperatureEvent: string
+  sendWindMeasurementEvent: string
+  sendRainfallEvent: string
   noAuthTokenMessage: string
   invalidTokenMessage: string
   exceptionEvent: string
@@ -59,7 +62,10 @@ export class Config {
     this.log = { level: (process.env.LOG_LEVEL as Level) || 'debug' }
     this.socket = {
       exceptionEvent: 'exception',
-      sendMeasurementEvent: 'sendMeasurement',
+      sendAirMeasurementEvent: 'sendAirMeasurement',
+      sendGroundTemperatureEvent: 'sendGroundTemperature',
+      sendWindMeasurementEvent: 'sendWindMeasurement',
+      sendRainfallEvent: 'sendRainfall',
       roomName: 'room',
       noAuthTokenMessage: 'No auth token provided',
       invalidTokenMessage: 'Invalid token',
