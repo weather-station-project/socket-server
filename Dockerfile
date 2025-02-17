@@ -16,7 +16,7 @@ WORKDIR /app
 COPY --from=builder /app/dist/ .
 COPY package*.json ./
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl && npm clean-install --ignore-scripts --omit=dev
 RUN chown node:node -R /app
 
 USER node
