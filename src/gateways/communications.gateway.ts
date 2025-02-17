@@ -18,7 +18,7 @@ import { WebsocketExceptionsFilter } from '../filters/wsexception.filter'
 import { SocketIdStorage } from '../utils/socketStorage.util'
 import { instrument } from '@socket.io/admin-ui'
 import * as bcrypt from 'bcryptjs'
-import { getUserFromSocketData, ICustomException, UserDto } from '../model/model.model'
+import { getUserFromSocketData, ICustomException, Role, UserDto } from '../model/model.model'
 
 @UseFilters(WebsocketExceptionsFilter)
 @UseGuards(JwtAuthGuard)
@@ -73,7 +73,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
           } as ICustomException)
         )
       } else {
-        this.logger.error(e, `Error when trying connection`)
+        this.logger.error(e, 'Error when trying connection')
       }
 
       socket.disconnect(true)
@@ -92,7 +92,22 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     SocketIdStorage.set(socket.id)
 
     try {
-      this.emitToLocation(socket, GlobalConfig.socket.sendMeasurementEvent, content)
+      const user: UserDto = getUserFromSocketData(socket.data)
+
+      if (user.role !== Role.Write) {
+        this.logger.warn(`User '${user.login}' has no permission to send measurements`)
+
+        this.emitToClient(
+          socket,
+          GlobalConfig.socket.exceptionEvent,
+          JSON.stringify({
+            status: 'ws_error',
+            message: 'User has no permission to send measurements',
+          } as ICustomException)
+        )
+      } else {
+        this.emitToLocation(socket, GlobalConfig.socket.sendMeasurementEvent, content)
+      }
     } catch (e) {
       this.logger.error(e, `Error on '${GlobalConfig.socket.sendMeasurementEvent}' event`)
     }

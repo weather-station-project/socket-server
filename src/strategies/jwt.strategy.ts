@@ -1,26 +1,23 @@
-import { ExtractJwt, Strategy } from 'passport-jwt'
+import { Strategy } from 'passport-jwt'
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { GlobalConfig } from '../config/global.config'
-import { Request } from 'express'
-import { ITokenPayload } from '../model/model.model'
+import { Socket } from 'socket.io'
+import { AuthService } from '../services/auth.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor() {
+  constructor(authService: AuthService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (socket: Socket) => {
+        return authService.retrieveToken(socket)
+      },
       jsonWebTokenOptions: { ignoreExpiration: false },
       secretOrKey: GlobalConfig.auth.jwtSecret,
-      passReqToCallback: true,
     })
   }
 
-  async validate(req: Request, tokenPayload: ITokenPayload): Promise<boolean> {
-    // Assign a user to the request to use it in the handlers
-    req['userFromToken'] = tokenPayload.user
-
-    // This method is executed once the token is valid, hence we don't need to validate anything else.
+  async validate(): Promise<boolean> {
     return true
   }
 }
