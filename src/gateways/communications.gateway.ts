@@ -122,7 +122,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
           JSON.stringify({
             status: 'ws_error',
             message: 'User has no permission to send events',
-          } as ICustomException),
+          } as ICustomException)
         )
       } else {
         this.emitToLocation(socket, event, content)
