@@ -87,24 +87,24 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     this.logger.log(`Device with name '${user.login}' disconnected`)
   }
 
-  @SubscribeMessage(GlobalConfig.socket.sendAirMeasurementEvent)
+  @SubscribeMessage(GlobalConfig.socket.emitAirMeasurementEvent)
   sendAirMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
-    this.processMessage(socket, GlobalConfig.socket.sendAirMeasurementEvent, content)
+    this.processMessage(socket, GlobalConfig.socket.emitAirMeasurementEvent, content)
   }
 
-  @SubscribeMessage(GlobalConfig.socket.sendGroundTemperatureEvent)
+  @SubscribeMessage(GlobalConfig.socket.emitGroundTemperatureEvent)
   sendGroundTemperatureEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
-    this.processMessage(socket, GlobalConfig.socket.sendGroundTemperatureEvent, content)
+    this.processMessage(socket, GlobalConfig.socket.emitGroundTemperatureEvent, content)
   }
 
-  @SubscribeMessage(GlobalConfig.socket.sendWindMeasurementEvent)
+  @SubscribeMessage(GlobalConfig.socket.emitWindMeasurementEvent)
   sendWindMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
-    this.processMessage(socket, GlobalConfig.socket.sendWindMeasurementEvent, content)
+    this.processMessage(socket, GlobalConfig.socket.emitWindMeasurementEvent, content)
   }
 
-  @SubscribeMessage(GlobalConfig.socket.sendRainfallEvent)
+  @SubscribeMessage(GlobalConfig.socket.emitRainfallEvent)
   sendRainfallEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
-    this.processMessage(socket, GlobalConfig.socket.sendRainfallEvent, content)
+    this.processMessage(socket, GlobalConfig.socket.emitRainfallEvent, content)
   }
 
   private processMessage(socket: Socket, event: string, content: unknown): void {
@@ -134,16 +134,22 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
 
   private emitToClient(socket: Socket, event: string, content: unknown): void {
     SocketIdStorage.set(socket.id)
+    const user: UserDto = getUserFromSocketData(socket.data)
+
     socket.compress(true).emit(event, content)
+    this.logger.debug(`Emitting event '${event}' to '${user.login}'`)
   }
 
   private emitToLocation(socket: Socket, event: string, content?: unknown): void {
     SocketIdStorage.set(socket.id)
+    const user: UserDto = getUserFromSocketData(socket.data)
 
     if (content === undefined) {
       socket.compress(true).to(GlobalConfig.socket.roomName).emit(event)
     } else {
       socket.compress(true).to(GlobalConfig.socket.roomName).emit(event, content)
     }
+
+    this.logger.debug(`Emitting event '${event}' from '${user.login}' to the room '${GlobalConfig.socket.roomName}'`)
   }
 }
