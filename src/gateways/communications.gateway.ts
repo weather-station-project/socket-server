@@ -137,7 +137,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     const user: UserDto = getUserFromSocketData(socket.data)
 
     socket.compress(true).emit(event, content)
-    this.logger.debug(`Emitting event '${event}' to '${user.login}'`)
+    this.logger.debug(`Emitting event '${event}' to '${user.login || socket.id}'`)
   }
 
   private emitToLocation(socket: Socket, event: string, content?: unknown): void {
