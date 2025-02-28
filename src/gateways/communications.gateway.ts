@@ -20,6 +20,8 @@ import { instrument } from '@socket.io/admin-ui'
 import * as bcrypt from 'bcryptjs'
 import { getUserFromSocketData, ICustomException, Role, UserDto } from '../model/model.model'
 
+const ACK:string = 'OK'
+
 @UseFilters(WebsocketExceptionsFilter)
 @UseGuards(JwtAuthGuard)
 @WebSocketGateway({
@@ -88,23 +90,27 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
   }
 
   @SubscribeMessage(GlobalConfig.socket.emitAirMeasurementEvent)
-  sendAirMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+  sendAirMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): string {
     this.processMessage(socket, GlobalConfig.socket.emitAirMeasurementEvent, content)
+    return ACK
   }
 
   @SubscribeMessage(GlobalConfig.socket.emitGroundTemperatureEvent)
-  sendGroundTemperatureEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+  sendGroundTemperatureEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): string {
     this.processMessage(socket, GlobalConfig.socket.emitGroundTemperatureEvent, content)
+    return ACK
   }
 
   @SubscribeMessage(GlobalConfig.socket.emitWindMeasurementEvent)
-  sendWindMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+  sendWindMeasurementEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): string {
     this.processMessage(socket, GlobalConfig.socket.emitWindMeasurementEvent, content)
+    return ACK
   }
 
   @SubscribeMessage(GlobalConfig.socket.emitRainfallEvent)
-  sendRainfallEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): void {
+  sendRainfallEvent(@ConnectedSocket() socket: Socket, @MessageBody() content: unknown): string {
     this.processMessage(socket, GlobalConfig.socket.emitRainfallEvent, content)
+    return ACK
   }
 
   private processMessage(socket: Socket, event: string, content: unknown): void {
