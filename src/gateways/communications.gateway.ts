@@ -20,7 +20,7 @@ import { instrument } from '@socket.io/admin-ui'
 import * as bcrypt from 'bcryptjs'
 import { getUserFromSocketData, ICustomException, Role, UserDto } from '../model/model.model'
 
-const ACK:string = 'OK'
+const ACK: string = 'OK'
 
 @UseFilters(WebsocketExceptionsFilter)
 @UseGuards(JwtAuthGuard)
