@@ -8,9 +8,9 @@ import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.i
 async function bootstrap(): Promise<void> {
   const httpsOptions: HttpsOptions = GlobalConfig.environment.isProduction
     ? {
-      key: fs.readFileSync(GlobalConfig.server.keyFile),
-      cert: fs.readFileSync(GlobalConfig.server.certFile),
-    }
+        key: fs.readFileSync(GlobalConfig.server.keyFile),
+        cert: fs.readFileSync(GlobalConfig.server.certFile),
+      }
     : undefined
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
