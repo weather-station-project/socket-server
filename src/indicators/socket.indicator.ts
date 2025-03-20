@@ -25,7 +25,7 @@ export class SocketHealthIndicator {
       } as UserDto)
       let attempt: number = 1
 
-      socketInstance = io(`http://localhost:${GlobalConfig.server.serverPort}`, {
+      socketInstance = io(`${GlobalConfig.environment.isProduction ? 'https' : 'http'}://localhost:${GlobalConfig.server.serverPort}`, {
         transports: ['websocket'],
         autoConnect: false,
         reconnection: false,
