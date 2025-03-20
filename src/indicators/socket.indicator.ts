@@ -34,6 +34,7 @@ export class SocketHealthIndicator {
           auth: {
             token: `Bearer ${token.access_token}`,
           },
+          rejectUnauthorized: false
         }
       )
       socketInstance.connect()
