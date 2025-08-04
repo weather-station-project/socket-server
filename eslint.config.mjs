@@ -1,40 +1,26 @@
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import globals from "globals";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import globals from "globals"
+import js from '@eslint/js'
+import tseslint from 'typescript-eslint'
+import eslintConfigPrettier from "eslint-config-prettier/flat"
+import typescriptEslint from "@typescript-eslint/eslint-plugin"
+import esLintParser from "@typescript-eslint/parser"
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-export default [{
-    ignores: ["**/node_modules", "**/.idea", "**/eslint.config.mjs", "**/.husky"],
-}, ...compat.extends(
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-), {
-    plugins: {
-        "@typescript-eslint": typescriptEslint,
+export default tseslint.config({
+  languageOptions: {
+    ecmaVersion: 12,
+    sourceType: "module",
+    globals: {
+      ...globals.browser,
+      ...globals.node,
+      myCustomGlobal: "readonly",
     },
-
-    languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.commonjs,
-        },
-
-        parser: tsParser,
-        ecmaVersion: 12,
-        sourceType: "module",
-    },
-
-    rules: {},
-}];
+    parser: esLintParser,
+  },
+  plugins: {
+    typescriptEslint,
+  },
+  extends: [js.configs.recommended, ...tseslint.configs.recommended, eslintConfigPrettier],
+  rules: {...eslintConfigPrettier.rules},
+  files: ["src/**/*.ts", "src/*.ts", "tests/**/*.ts"],
+  ignores: ["node_modules/**", ".idea/**"]
+})
