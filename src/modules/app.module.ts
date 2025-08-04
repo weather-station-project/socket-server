@@ -49,15 +49,15 @@ interface ILogBinding {
         customAttributeKeys: { req: 'httpRequest', res: 'httpResponse' },
         transport: GlobalConfig.otlp.debugInConsole
           ? {
-            target: 'pino-pretty',
-            options: {
-              singleLine: true,
-              colorize: true,
-            },
-          }
+              target: 'pino-pretty',
+              options: {
+                singleLine: true,
+                colorize: true,
+              },
+            }
           : {
-            target: 'pino-opentelemetry-transport',
-          },
+              target: 'pino-opentelemetry-transport',
+            },
       },
     }),
     ConfigModule.forRoot({ cache: true, isGlobal: true }),
