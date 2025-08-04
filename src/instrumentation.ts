@@ -15,6 +15,7 @@ import { resourceFromAttributes } from '@opentelemetry/resources'
 import { HostMetrics } from '@opentelemetry/host-metrics'
 import { metrics } from '@opentelemetry/api'
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino'
+import { SocketIoInstrumentation } from '@opentelemetry/instrumentation-socket.io'
 
 /*
 Useful links:
@@ -32,7 +33,7 @@ export const otelSDK = new NodeSDK({
     [ATTR_SERVICE_VERSION]: GlobalConfig.otlp.attrs.serviceVersion,
     [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: GlobalConfig.otlp.attrs.deploymentEnvironment,
   }),
-  instrumentations: [new NestInstrumentation(), new PinoInstrumentation()],
+  instrumentations: [new SocketIoInstrumentation(), new NestInstrumentation(), new PinoInstrumentation()],
 })
 
 function getProcessors(): SpanProcessor[] {
