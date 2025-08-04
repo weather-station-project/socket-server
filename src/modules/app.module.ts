@@ -27,7 +27,7 @@ interface ILogBinding {
         level: GlobalConfig.log.level,
         timestamp: !GlobalConfig.environment.isProduction,
         customProps: (request: IncomingMessage) => ({
-          correlationId: request.id,
+          correlation_id: request.id,
         }),
         hooks: {
           logMethod(args: Parameters<LogFn>, method: LogFn): void {
@@ -47,13 +47,17 @@ interface ILogBinding {
           },
         },
         customAttributeKeys: { req: 'httpRequest', res: 'httpResponse' },
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            singleLine: true,
-            colorize: true,
+        transport: GlobalConfig.otlp.debugInConsole
+          ? {
+            target: 'pino-pretty',
+            options: {
+              singleLine: true,
+              colorize: true,
+            },
+          }
+          : {
+            target: 'pino-opentelemetry-transport',
           },
-        },
       },
     }),
     ConfigModule.forRoot({ cache: true, isGlobal: true }),

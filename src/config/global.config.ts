@@ -38,12 +38,23 @@ interface ILogConfig {
   level: Level
 }
 
+interface IOtlpConfig {
+  rootUrl: string
+  debugInConsole: boolean
+  attrs: {
+    serviceName: string
+    serviceVersion: string
+    deploymentEnvironment: string
+  }
+}
+
 export class Config {
   environment: IEnvironmentConfig
   server: IServerConfig
   auth: IAuthConfig
   log: ILogConfig
   socket: ISocketConfig
+  otlp: IOtlpConfig
 
   constructor() {
     this.environment = {
@@ -73,6 +84,15 @@ export class Config {
       roomName: 'room',
       noAuthTokenMessage: 'No auth token provided',
       invalidTokenMessage: 'Invalid token',
+    }
+    this.otlp = {
+      rootUrl: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4318',
+      debugInConsole: process.env.OTEL_DEBUG_IN_CONSOLE === 'true',
+      attrs: {
+        serviceName: 'wsp-socket-server',
+        serviceVersion: process.env.OTEL_SERVICE_VERSION || '0.0.1',
+        deploymentEnvironment: process.env.OTEL_DEPLOYMENT_ENVIRONMENT || 'localhost',
+      },
     }
   }
 }
