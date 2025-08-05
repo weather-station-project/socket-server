@@ -1,7 +1,5 @@
-import * as process from 'process'
-import pino from 'pino'
-import Level = pino.Level
 import { Algorithm } from 'jsonwebtoken'
+import { Level } from 'pino'
 
 interface IEnvironmentConfig {
   isDevelopment: boolean
