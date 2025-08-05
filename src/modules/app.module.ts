@@ -13,7 +13,7 @@ import LogFn = pino.LogFn
 
 interface ILogBinding {
   context: string
-  correlationId?: string
+  correlation_id?: string
   err?: Error
 }
 
@@ -37,7 +37,7 @@ interface ILogBinding {
 
             let message: string = undefined
             if (socketId) {
-              bindings.correlationId = socketId
+              bindings.correlation_id = socketId
               message = `[${bindings.context}] [${socketId}] - ${text}`
             } else {
               message = `[${bindings.context}] - ${text}`

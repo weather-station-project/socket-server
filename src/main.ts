@@ -1,10 +1,10 @@
+import { getHostMetricsSDK, otelSDK } from './instrumentation'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './modules/app.module'
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino'
 import { GlobalConfig } from './config/global.config'
 import * as fs from 'node:fs'
 import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface'
-import { getHostMetricsSDK, otelSDK } from './instrumentation'
 
 async function bootstrap(): Promise<void> {
   const httpsOptions: HttpsOptions = GlobalConfig.environment.isProduction
