@@ -13,7 +13,7 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import { resourceFromAttributes } from '@opentelemetry/resources'
 import { HostMetrics } from '@opentelemetry/host-metrics'
-import { metrics } from '@opentelemetry/api'
+import { diag, DiagConsoleLogger, DiagLogLevel, metrics } from '@opentelemetry/api'
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino'
 import { SocketIoInstrumentation } from '@opentelemetry/instrumentation-socket.io'
 
@@ -24,6 +24,9 @@ Useful links:
   https://github.com/pinojs/pino-opentelemetry-transport
   https://opentelemetry.io/docs/concepts/semantic-conventions/
 */
+
+// Enable OpenTelemetry debug logging to the console
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG)
 
 export const otelSDK = new NodeSDK({
   spanProcessors: getProcessors(),
