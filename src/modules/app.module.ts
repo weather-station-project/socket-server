@@ -47,7 +47,7 @@ interface ILogBinding {
           },
         },
         customAttributeKeys: { req: 'httpRequest', res: 'httpResponse' },
-        transport: GlobalConfig.otlp.debugInConsole
+        transport: GlobalConfig.otel.debugInConsole
           ? {
               target: 'pino-pretty',
               options: {

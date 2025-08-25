@@ -32,9 +32,9 @@ export const otelSDK = new NodeSDK({
   spanProcessors: getProcessors(),
   metricReader: getMetricReader(),
   resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: GlobalConfig.otlp.attrs.serviceName,
-    [ATTR_SERVICE_VERSION]: GlobalConfig.otlp.attrs.serviceVersion,
-    [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: GlobalConfig.otlp.attrs.deploymentEnvironment,
+    [ATTR_SERVICE_NAME]: GlobalConfig.otel.attrs.serviceName,
+    [ATTR_SERVICE_VERSION]: GlobalConfig.otel.attrs.serviceVersion,
+    [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: GlobalConfig.otel.attrs.deploymentEnvironment,
   }),
   instrumentations: [new SocketIoInstrumentation(), new NestInstrumentation(), new PinoInstrumentation()],
 })
@@ -42,10 +42,10 @@ export const otelSDK = new NodeSDK({
 function getProcessors(): SpanProcessor[] {
   return [
     new BatchSpanProcessor(
-      GlobalConfig.otlp.debugInConsole
+      GlobalConfig.otel.debugInConsole
         ? new ConsoleSpanExporter()
         : new OTLPTraceExporter({
-            url: `${GlobalConfig.otlp.rootUrl}/v1/traces`,
+            url: `${GlobalConfig.otel.rootUrl}/v1/traces`,
             headers: {},
           })
     ),
@@ -54,10 +54,10 @@ function getProcessors(): SpanProcessor[] {
 
 function getMetricReader(): IMetricReader {
   return new PeriodicExportingMetricReader({
-    exporter: GlobalConfig.otlp.debugInConsole
+    exporter: GlobalConfig.otel.debugInConsole
       ? new ConsoleMetricExporter()
       : new OTLPMetricExporter({
-          url: `${GlobalConfig.otlp.rootUrl}/v1/metrics`,
+          url: `${GlobalConfig.otel.rootUrl}/v1/metrics`,
         }),
   })
 }

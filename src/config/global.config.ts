@@ -36,7 +36,7 @@ interface ILogConfig {
   level: Level
 }
 
-interface IOtlpConfig {
+interface IOtelConfig {
   rootUrl: string
   debugInConsole: boolean
   attrs: {
@@ -52,7 +52,7 @@ export class Config {
   auth: IAuthConfig
   log: ILogConfig
   socket: ISocketConfig
-  otlp: IOtlpConfig
+  otel: IOtelConfig
 
   constructor() {
     this.environment = {
@@ -83,7 +83,7 @@ export class Config {
       noAuthTokenMessage: 'No auth token provided',
       invalidTokenMessage: 'Invalid token',
     }
-    this.otlp = {
+    this.otel = {
       rootUrl: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4318',
       debugInConsole: process.env.OTEL_DEBUG_IN_CONSOLE === 'true',
       attrs: {
