@@ -34,6 +34,7 @@ export class SocketHealthIndicator {
           auth: {
             token: `Bearer ${token.access_token}`,
           },
+          extraHeaders: { 'skip-logging': 'true' },
           rejectUnauthorized: false,
         }
       )

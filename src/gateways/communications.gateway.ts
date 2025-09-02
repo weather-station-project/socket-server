@@ -34,6 +34,7 @@ const ACK: string = 'OK'
 export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server
+
   private readonly logger: Logger = new Logger(CommunicationsGateway.name)
 
   constructor(private readonly authService: AuthService) {}
@@ -55,16 +56,19 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     SocketIdStorage.set(socket.id)
 
     try {
-      this.logger.log('Starting connection')
+      this.logInfoOrSkip(socket, 'Starting connection')
 
       const user: UserDto = this.authService.getUserFromToken(this.authService.retrieveToken(socket))
       socket.data = user
       socket.join(GlobalConfig.socket.roomName)
 
-      this.logger.log(`User '${user.login}' with role '${user.role}' joined to '${GlobalConfig.socket.roomName}'`)
+      this.logInfoOrSkip(
+        socket,
+        `User '${user.login}' with role '${user.role}' joined to '${GlobalConfig.socket.roomName}'`
+      )
     } catch (e) {
       if (e instanceof WsException) {
-        this.logger.log(`Socket forced to disconnect due to '${e.message}'`)
+        this.logInfoOrSkip(socket, `Socket forced to disconnect due to '${e.message}'`)
 
         this.emitToClient(
           socket,
@@ -75,7 +79,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
           } as ICustomException)
         )
       } else {
-        this.logger.error(e, 'Error when trying connection')
+        this.logErrorOrSkip(socket, 'Error when trying connection', e)
       }
 
       socket.disconnect(true)
@@ -86,7 +90,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     SocketIdStorage.set(socket.id)
 
     const user: UserDto = getUserFromSocketData(socket.data)
-    this.logger.log(`Device with name '${user.login}' disconnected`)
+    this.logInfoOrSkip(socket, `Device with name '${user.login}' disconnected`)
   }
 
   @SubscribeMessage(GlobalConfig.socket.emitAirMeasurementEvent)
@@ -143,7 +147,7 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
     const user: UserDto = getUserFromSocketData(socket.data)
 
     socket.compress(true).emit(event, content)
-    this.logger.debug(`Emitting event '${event}' to '${user.login || socket.id}'`)
+    this.logDebugOrSkip(socket, `Emitting event '${event}' to '${user.login || socket.id}'`)
   }
 
   private emitToLocation(socket: Socket, event: string, content?: unknown): void {
@@ -156,6 +160,37 @@ export class CommunicationsGateway implements OnGatewayInit, OnGatewayConnection
       socket.compress(true).to(GlobalConfig.socket.roomName).emit(event, content)
     }
 
-    this.logger.debug(`Emitting event '${event}' from '${user.login}' to the room '${GlobalConfig.socket.roomName}'`)
+    this.logDebugOrSkip(
+      socket,
+      `Emitting event '${event}' from '${user.login}' to the room '${GlobalConfig.socket.roomName}'`
+    )
+  }
+
+  private getHeaderValue(socket: Socket, header: string): string | undefined {
+    const value: string | string[] = socket.handshake.headers[header.toLowerCase()]
+
+    if (Array.isArray(value)) {
+      return value[0]
+    }
+
+    return value
+  }
+
+  private logDebugOrSkip(socket: Socket, message: string): void {
+    if (this.getHeaderValue(socket, 'skip-logging') !== 'true') {
+      this.logger.debug(message)
+    }
+  }
+
+  private logInfoOrSkip(socket: Socket, message: string): void {
+    if (this.getHeaderValue(socket, 'skip-logging') !== 'true') {
+      this.logger.log(message)
+    }
+  }
+
+  private logErrorOrSkip(socket: Socket, message: string, error: Error): void {
+    if (this.getHeaderValue(socket, 'skip-logging') !== 'true') {
+      this.logger.error(error, message)
+    }
   }
 }
